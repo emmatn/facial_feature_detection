@@ -1,0 +1,11 @@
+# Data (too large for GitHub)
+data/
+*.zip
+
+# Python and editor clutter
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+.DS_Store
