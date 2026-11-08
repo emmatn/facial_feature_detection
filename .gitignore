@@ -13,3 +13,6 @@ venv/
 # checker 
 results/checks/
 03_check_landmarks.py
+
+# readme
+README.md
