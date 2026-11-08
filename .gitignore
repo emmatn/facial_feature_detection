@@ -9,3 +9,7 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 .DS_Store
+
+# checker 
+results/checks/
+03_check_landmarks.py

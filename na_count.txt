@@ -1,0 +1,20 @@
+Reasonable counts: 
+
+(30000, 34)
+l_brow_out_x       971
+l_brow_in_x        971
+r_brow_in_x       1032
+r_brow_out_x      1032
+l_eye_out_x        742
+l_eye_in_x         742
+r_eye_in_x         740
+r_eye_out_x        740
+nose_bottom_x        2
+l_mouth_x           68
+r_mouth_x           68
+u_lip_top_x        133
+l_lip_bottom_x     108
+chin_x             845
+dtype: int64
+
+(30000, 64, 64, 3)
