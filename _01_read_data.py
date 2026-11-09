@@ -1,4 +1,10 @@
-# 01: Loading the Data
+''' Loading the data
+
+
+
+
+
+'''
 import os
 import numpy as np
 import pandas as pd
@@ -12,15 +18,6 @@ n_images = 50 if test_run else config.n_images
 
 mask_size = 512
 output_path = "data/processed"
-
-# landmarks from masks
-# l_ and r_ are the person's left and right, so l_ parts appear on the right side of the image
-LANDMARK_NAMES = ["l_brow_out", "l_brow_in", "r_brow_in", "r_brow_out",
-                  "l_eye_out", "l_eye_in", "r_eye_in", "r_eye_out",
-                  "nose_bottom", "l_mouth", "r_mouth", "u_lip_top",
-                  "l_lip_bottom", "chin"]
-
-LANDMARK_COLS = [f"{name}_{axis}" for name in LANDMARK_NAMES for axis in ("x", "y")]
 
 def read_mask(idx, part):
     path = f"{config.mask_path}/{idx // 2000}/{idx:05d}_{part}.png"
@@ -73,7 +70,7 @@ def nose_bottom_point(mask):
     return (x, bottom_row)
 
 def landmarks_for(idx):
-    points = {name: None for name in LANDMARK_NAMES}
+    points = {name: None for name in config.LANDMARK_NAMES}
 
     l_brow = load_part(idx, "l_brow")
     if l_brow is not None:
@@ -126,7 +123,7 @@ def landmarks_for(idx):
             points["chin"] = chin
 
     row = []
-    for name in LANDMARK_NAMES:
+    for name in config.LANDMARK_NAMES:
         point = points[name]
         row += [np.nan, np.nan] if point is None else list(point)
     return np.array(row, dtype=float) / mask_size
@@ -142,7 +139,7 @@ def read_anno(path):
 
 def build_labels():
     rows = [landmarks_for(idx) for idx in range(n_images)]
-    labels = pd.DataFrame(rows, columns=LANDMARK_COLS)
+    labels = pd.DataFrame(rows, columns=config.LANDMARK_COLS)
     labels["idx"] = range(n_images)
 
     attrs = read_anno(config.attr_path)
@@ -155,13 +152,14 @@ def build_labels():
     labels = labels.merge(attrs, on="idx").merge(pose, on="idx")
     labels.to_csv(f"{output_path}/labels.csv", index=False)
     print(labels.shape)
-    print(labels[LANDMARK_COLS[::2]].isna().sum())
+    print(labels[config.LANDMARK_COLS[::2]].isna().sum())
 
 def build_images():
-    size = config.image_size
+    size = config.image_size # 64
     images = np.zeros((config.n_images, size, size, 3), dtype=np.uint8)
     for idx in range(config.n_images):
         img = Image.open(f"{config.img_path}/{idx}.jpg").convert("RGB")
+        # BILINEAR blends neighboring pixels so the small image looks smooth instead of jagged
         images[idx] = np.array(img.resize((size, size), Image.BILINEAR))
     np.save(f"{output_path}/images.npy", images)
     print(images.shape)

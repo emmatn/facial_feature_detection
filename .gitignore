@@ -10,9 +10,7 @@ venv/
 .ipynb_checkpoints/
 .DS_Store
 
-# checker 
+# checker / notes
 results/checks/
-03_check_landmarks.py
-
-# readme
-README.md
+_03_check_landmarks.py
+_11_test_model.py

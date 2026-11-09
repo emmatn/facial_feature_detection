@@ -7,9 +7,6 @@ Question: Can a dynamic (early-exit) neural network detect facial landmarks as a
 
 Doing segmentation classification - label every pixel for each part of the face to identify (finding locations of facial features)
 
-Goal by Nov 10: underfit the model (scoring poorly on train + test) --> improve from there
-Visual - Plot training loss and validation loss per epoch
-
 Data: CelebA HQ - 30k images 3 labels: pixel masks of facial parts, 40 yes/no attributes, and head angles
 
     1. CelebA-HQ-img - 30k jpeg face images - 1024×1024 pixels with 3 color channels 
