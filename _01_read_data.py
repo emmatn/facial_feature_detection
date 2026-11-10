@@ -1,9 +1,9 @@
-''' Loading the data
-
-
-
-
-
+''' Build dataset 
+    - For each face, it reads the part masks and computes the 14 landmark points, scaled to 0-1. 
+    - A landmark is left blank when its part is missing.
+    - It merges in two attributes (eyeglasses, hat) and the head-angle data (yaw, pitch, roll)
+    and writes the result to data/processed/labels.csv.
+    - It shrinks every photo to 64 x 64 and saves them all as data/processed/images.npy.
 '''
 import os
 import numpy as np

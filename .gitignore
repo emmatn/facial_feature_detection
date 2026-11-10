@@ -1,16 +1,13 @@
 # Data (too large for GitHub)
 data/
-*.zip
 
 # Python and editor clutter
 __pycache__/
-*.pyc
 .venv/
 venv/
-.ipynb_checkpoints/
 .DS_Store
 
 # checker / notes
 results/checks/
-_03_check_landmarks.py
-_11_test_model.py
+check_landmarks.py
+test_model.py

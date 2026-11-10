@@ -1,4 +1,10 @@
+''' training the model 
+    prints training and validation error in pixels each epoch
+    reports error on the frontal and non-frontal test sets
+'''
+
 import numpy as np
+import os
 import pandas as pd
 import torch
 import matplotlib.pyplot as plt
@@ -9,7 +15,7 @@ import _11_model
 # set seed
 torch.manual_seed(config.seed)
 
-train_size = 2000 
+train_size = 5000 
 n_epochs = 20
 batch_size = 32 # faces per update
 
@@ -39,7 +45,7 @@ def masked_mse(pred, target, visible):
 model = _11_model.CNN(n_outputs=28)
 
 # can this be manipulated more 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
 train_losses, val_losses = [], []
 for epoch in range(n_epochs):
@@ -67,9 +73,42 @@ for epoch in range(n_epochs):
     val_px = val_losses[-1] ** 0.5 * 64
     print(f"epoch {epoch + 1}: train {train_px:.2f}  val {val_px:.2f}")
 
-# plt.plot(range(1, n_epochs + 1), train_losses, label="train")
-# plt.plot(range(1, n_epochs + 1), val_losses, label="validation")
-# plt.xlabel("epoch")
-# plt.ylabel("masked MSE loss")
-# plt.legend()
-# plt.savefig(f"results/loss_basic_cnn_{train_size}.png")
+model.eval()
+test_results = {}
+for name in ["test_frontal", "test_not_frontal"]:
+    loader = DataLoader(load_split(name, images, labels), batch_size=batch_size)
+    total = 0.0
+    with torch.no_grad():
+        for x, y, visible in loader:
+            total += masked_mse(model(x), y, visible).item() * len(x)
+    test_px = (total / len(loader.dataset)) ** 0.5 * 64
+    test_results[name] = test_px
+    print(f"{name}: {test_px:.2f} px")
+
+torch.save(model.state_dict(), f"{config.results_path}/model.pt") # trained weights, for the visualize file
+
+# ------------- VISUALIZE ----------------
+train_px_curve = [loss ** 0.5 * 64 for loss in train_losses]
+val_px_curve = [loss ** 0.5 * 64 for loss in val_losses]
+
+epochs = range(1, n_epochs + 1)
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+# left: train vs validation error per epoch
+ax1.plot(epochs, train_px_curve, "o-", label="train", color="tab:blue")
+ax1.plot(epochs, val_px_curve, "o-", label="validation", color="tab:pink")
+ax1.set_xlabel("epoch")
+ax1.set_ylabel("error (px)")
+ax1.set_title("train vs validation")
+ax1.legend()
+
+# right: frontal vs non-frontal test error
+ax2.bar(["frontal", "non-frontal"], list(test_results.values()), color=["tab:blue", "tab:pink"])
+ax2.set_ylabel("error (px)")
+ax2.set_title("test: frontal vs non-frontal")
+fig.tight_layout()
+
+#os.makedirs(config.results_path, exist_ok=True) # creates results/ if it doesn't exist
+fig.savefig(f"{config.results_path}/04_results_{train_size}.png")
+
+plt.show()
+

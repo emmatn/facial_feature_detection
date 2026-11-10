@@ -5,7 +5,10 @@ Question: Can a dynamic (early-exit) neural network detect facial landmarks as a
     - Changing how much of the network each input uses - early exits and SkipNet
     - network is fixed after training but at prediction time an easy face leaves early while a hard face goes deeper
 
-Doing segmentation classification - label every pixel for each part of the face to identify (finding locations of facial features)
+Model: 
+- Landmark Coordinate Regression
+- For each face, it predicts 28 numbers (x,y) coordinates of the 14 facial landmarks.
+- training on frontal images, testing on frontal vs nonfrontal, seeing if it does worst on "harder"/more angled images 
 
 Data: CelebA HQ - 30k images 3 labels: pixel masks of facial parts, 40 yes/no attributes, and head angles
 
@@ -15,7 +18,6 @@ Data: CelebA HQ - 30k images 3 labels: pixel masks of facial parts, 40 yes/no at
     2. CelebAMask-HQ-mask-anno
         - 15 subfolders - 2k images
         - 512 x 512 RGB
-        - * NEED TO CONVERT TO GRAYSCALE * 
         - 18 parts: skin, nose, eye_g (eyeglasses), l_eye, r_eye, l_brow, r_brow, l_ear, r_ear, mouth, u_lip (upper lip), l_lip (lower lip), hair, hat, ear_r (earring), neck_l (necklace), neck, cloth
         - Note: Humans drew on these masks so the labels stay accurate on hard faces
 
@@ -24,8 +26,7 @@ Steps:
 - upload data, resizing, grayscale 
 - split data - train, validate, test
 - write Dataset class
-- Define model (small for underfitting)
-- Write Dataloader
+- Define simple model 
 
 Notes: 
 - Masks are raw material drawn by humans (used once when loading, then for occlusion)
@@ -38,5 +39,3 @@ Notes:
         Bottom of lower lip: the lowest l_lip pixel in that same center column.
         Chin: the lowest skin pixel in the face's center column.
 
-Other:
-- If model can predict where landmark is if rectangle covers it? 
